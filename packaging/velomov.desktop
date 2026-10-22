@@ -1,0 +1,15 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Name=VeloMov
+GenericName=Video Editor
+GenericName[pt_BR]=Editor de vídeo
+Comment=Lightweight video editor with transitions, effects and keyframes
+Comment[pt_BR]=Editor de vídeo leve com transições, efeitos e quadros-chave
+Exec=velomov %F
+Icon=velomov
+Terminal=false
+Categories=AudioVideo;Video;AudioVideoEditing;
+Keywords=video;editor;cut;transition;keyframe;
+MimeType=video/mp4;video/x-matroska;video/webm;video/quicktime;video/x-msvideo;image/png;image/jpeg;audio/mpeg;audio/x-wav;audio/flac;
+StartupWMClass=velomov

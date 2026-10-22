@@ -3506,8 +3506,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "veloeditor"
-version = "0.5.0"
+name = "velomov"
+version = "0.8.0"
 dependencies = [
  "anyhow",
  "bytemuck",

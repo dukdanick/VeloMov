@@ -1,0 +1,30 @@
+VeloMov para Windows
+====================
+
+Editor de vídeo leve: linha do tempo, keyframes, transições com motion blur,
+efeitos, filtros, textos e LEGENDAS AUTOMÁTICAS ANIMADAS (Whisper, roda no seu PC).
+
+Requisitos: Windows 10 ou 11 (64 bits), placa de vídeo com DirectX 12 ou Vulkan.
+
+INSTALADOR
+  Rode VeloMov-...-setup.exe. Ele cria atalhos no Menu Iniciar (e na Área de
+  Trabalho, se marcar) e associa arquivos .vcut. Desinstale pelo Painel de Controle
+  ou em Configurações > Aplicativos.
+
+PORTÁTIL
+  Descompacte o .zip em qualquer pasta (ou pendrive) e abra velomov.exe.
+  O arquivo portable.txt faz o VeloMov guardar projetos, configurações e cache na
+  pasta 'data' ao lado do programa. Apague portable.txt para usar as pastas do usuário
+  (%APPDATA%\VeloMov e %LOCALAPPDATA%\VeloMov).
+
+LEGENDAS AUTOMÁTICAS
+  Aba 'Legendas' na biblioteca (à esquerda) > Gerar legendas. Na primeira vez o
+  modelo de fala escolhido é baixado (Base = 142 MB). Troque o modelo em
+  Configurações > Legendas automáticas; cada um tem uma explicação.
+  Troque o estilo animado na aba Estilos ou no painel de Texto da legenda.
+
+PASTAS
+  ffmpeg\   FFmpeg (decodificação e exportação, licença GPL)
+  whisper\  whisper.cpp (reconhecimento de fala, licença MIT)
+
+Licença: GPL-3.0-or-later (veja LICENSE.txt).
