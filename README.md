@@ -5,6 +5,8 @@ transitions with real motion blur, effects, filters, text, stickers, animated au
 FFmpeg export — with the familiar library / player / details / timeline layout of today's
 social-video editors.
 
+Note that the editor has not yet released its stable (1.0.0) version, so expect some bugs.
+
 *Versão em português: [LEIA-ME.md](./LEIA-ME.md).*
 
 ## Download
