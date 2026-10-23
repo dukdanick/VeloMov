@@ -14,7 +14,7 @@ redes sociais: biblioteca, player, detalhes e linha do tempo.
 * [`VeloMov-0.8.0-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-setup.exe): Instalador
 * [`VeloMov-0.8.0-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-portable.zip): Portátil
 
-**Linux**: compile a partir do código-fonte. Consulte [Instalação](#1-install).
+**Linux**: compile a partir do código-fonte. Consulte [Instalação](#1-instalar).
 
 ![Editor](docs/editor.png)
 
