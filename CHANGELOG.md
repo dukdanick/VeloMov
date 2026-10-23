@@ -2,7 +2,7 @@
 
 All notable changes to VeloMov. *Versão em português: [CHANGELOG.pt-BR.md](./CHANGELOG.pt-BR.md).*
 
-## 0.9.0 — 2026-10-23
+## 0.9.0 — 2026-10-23 (pre-release)
 
 ### Fonts
 
@@ -80,7 +80,7 @@ Every option applies at once, without restarting, and is saved with the other se
   kept in VeloMov's data folder instead of next to the project.
 * Keyframe diamonds on the timeline are drawn on top of trim handles and transitions.
 
-## 0.8.0 — 2026-10-22
+## 0.8.0 — 2026-10-22 (pre-release)
 
 * VeloCut is now **VeloMov**.
 * **Animated auto captions** with whisper.cpp, on your computer (GPU through Vulkan when
