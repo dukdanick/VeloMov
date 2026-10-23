@@ -1,6 +1,6 @@
 # VeloMov
 
-**A lightweight video editor for Linux and Windows.** Native Rust, GPU compositing, keyframes,
+**A lightweight Free and Open Source video editor for Linux and Windows.** Native Rust, GPU compositing, keyframes,
 transitions with real motion blur, effects, filters, text, stickers, animated auto captions and
 FFmpeg export — with the familiar library / player / details / timeline layout of today's
 social-video editors.
