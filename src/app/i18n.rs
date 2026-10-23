@@ -239,6 +239,7 @@ static PT: &[(&str, &str)] = &[
     ("New project", "Novo projeto"),
     ("Open project…", "Abrir projeto…"),
     ("Save", "Salvar"),
+    ("Save as…", "Salvar como…"),
     ("Import media…", "Importar mídia…"),
     ("Export…", "Exportar…"),
     ("Undo", "Desfazer"),

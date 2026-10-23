@@ -5,7 +5,7 @@
 //! Commands (one per line, `#` comments):
 //!   wait N | sleep MS | move X Y | down | up | click X Y | rclick X Y | dclick X Y
 //!   drag X1 Y1 X2 Y2 [STEPS] | key ctrl+shift+b | type TEXT | scroll DX DY [ctrl]
-//!   shot FILE.png | dump FILE.json | log TEXT | quit
+//!   shot FILE.png | dump FILE.json | saveas FILE.vmov | log TEXT | quit
 //!   dropfiles PATH... (files dropped from a file manager) | mods shift|ctrl|none (held keys)
 
 use super::VeloApp;
@@ -162,6 +162,12 @@ impl Script {
                 self.shot = a.get(1).map(|s| s.to_string());
                 self.shot_wait = 3;
                 ctx.send_viewport_cmd(egui::ViewportCommand::Screenshot(Default::default()));
+            }
+            "saveas" => {
+                // "Save as…" without the file dialog
+                if let Some(path) = a.get(1) {
+                    app.finish_save_as(std::path::PathBuf::from(path));
+                }
             }
             "dump" => {
                 if let Some(path) = a.get(1) {

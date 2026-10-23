@@ -19,8 +19,8 @@ use std::path::PathBuf;
 const HELP: &str = "VeloMov - lightweight video editor for Linux and Windows
 
 USAGE:
-  velomov [PROJECT.vcut]                 open the editor (optionally a project)
-  velomov --make-demo DIR                generate demo media + DIR/demo.vcut
+  velomov [PROJECT.vmov]                 open the editor (optionally a project)
+  velomov --make-demo DIR                generate demo media + DIR/demo.vmov
   velomov --render-frame PROJECT T OUT.png [--height H]
                                          render one frame at T seconds
   velomov --export PROJECT OUT [--res 1080] [--fps 30] [--codec h264|hevc|av1|vp9|prores|gif|h264-vaapi|hevc-vaapi]
@@ -50,11 +50,11 @@ fn cli_render_frame(args: &[String]) -> Result<()> {
     Ok(())
 }
 
-/// `--new-project OUT.vcut files…`: a project with the files on the timeline (videos/photos on
+/// `--new-project OUT.vmov files…`: a project with the files on the timeline (videos/photos on
 /// the main track in order, audio on an audio track).
 fn cli_new_project(args: &[String]) -> Result<()> {
     if args.len() < 2 {
-        return Err(anyhow!("usage: --new-project OUT.vcut FILES..."));
+        return Err(anyhow!("usage: --new-project OUT.vmov FILES..."));
     }
     let mut p = model::Project::new_named(&util::file_stem_of(&args[0]));
     for f in &args[1..] {
@@ -289,7 +289,7 @@ fn main() {
         Some("--make-demo") => {
             let dir = PathBuf::from(args.get(1).cloned().unwrap_or_else(|| "velomov-demo".into()));
             demo::make_demo(&dir).and_then(|mut p| {
-                let out = dir.join("demo.vcut");
+                let out = dir.join("demo.vmov");
                 p.save(&out)?;
                 println!("demo project: {}", out.display());
                 Ok(())

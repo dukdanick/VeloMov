@@ -45,28 +45,87 @@ impl HomeState {
 }
 
 pub fn list_projects() -> Vec<ProjectSummary> {
-    let mut v = vec![];
+    let mut paths = vec![];
     if let Ok(rd) = std::fs::read_dir(util::projects_dir()) {
         for e in rd.flatten() {
-            let p = e.path().join("project.vcut");
-            if !p.exists() {
-                continue;
+            let p = util::project_file(&e.path());
+            let old = p.with_extension(util::OLD_PROJECT_EXT);
+            if p.exists() {
+                paths.push(p);
+            } else if old.exists() {
+                paths.push(util::upgrade_project_file(&old));
             }
-            if let Ok(s) = std::fs::read_to_string(&p) {
-                if let Ok(proj) = serde_json::from_str::<Project>(&s) {
-                    v.push(ProjectSummary {
-                        path: p,
-                        name: proj.name.clone(),
-                        modified: proj.modified,
-                        duration: proj.duration(),
-                        ratio: format!("{}x{}", proj.width, proj.height),
-                    });
-                }
+        }
+    }
+    // projects saved elsewhere with "Save as" (the ones gone from disk are dropped)
+    let external = external_projects();
+    let alive: Vec<PathBuf> = external.iter().filter(|p| p.exists()).cloned().collect();
+    if alive.len() != external.len() {
+        write_external_projects(&alive);
+    }
+    paths.extend(alive);
+    let mut v = vec![];
+    for p in paths {
+        if let Ok(s) = std::fs::read_to_string(&p) {
+            if let Ok(proj) = serde_json::from_str::<Project>(&s) {
+                v.push(ProjectSummary {
+                    path: p,
+                    name: proj.name.clone(),
+                    modified: proj.modified,
+                    duration: proj.duration(),
+                    ratio: format!("{}x{}", proj.width, proj.height),
+                });
             }
         }
     }
     v.sort_by_key(|p| -p.modified);
     v
+}
+
+fn external_list_path() -> PathBuf {
+    util::config_dir().join("projects.json")
+}
+
+fn external_projects() -> Vec<PathBuf> {
+    std::fs::read_to_string(external_list_path()).ok().and_then(|s| serde_json::from_str(&s).ok()).unwrap_or_default()
+}
+
+fn write_external_projects(v: &[PathBuf]) {
+    if let Ok(s) = serde_json::to_string_pretty(v) {
+        let _ = std::fs::write(external_list_path(), s);
+    }
+}
+
+/// Show a project saved outside the projects directory on the home screen.
+pub fn remember_project(path: &std::path::Path) {
+    if util::is_internal_project(path) {
+        return;
+    }
+    let mut v = external_projects();
+    if !v.iter().any(|p| p == path) {
+        v.push(path.to_path_buf());
+        write_external_projects(&v);
+    }
+}
+
+fn forget_project(path: &std::path::Path) {
+    let mut v = external_projects();
+    v.retain(|p| p != path);
+    write_external_projects(&v);
+}
+
+/// Delete a project: its folder in the projects directory, or just the file (and its
+/// cover) for one saved elsewhere.
+fn delete_project(path: &std::path::Path) {
+    if util::is_internal_project(path) {
+        if let Some(dir) = path.parent() {
+            let _ = std::fs::remove_dir_all(dir);
+        }
+    } else {
+        let _ = std::fs::remove_file(path);
+        let _ = std::fs::remove_file(util::cover_path(path));
+        forget_project(path);
+    }
 }
 
 fn civil(days: i64) -> (i64, u32, u32) {
@@ -234,7 +293,7 @@ pub fn ui(app: &mut VeloApp, ctx: &egui::Context) {
                     let dir = util::data_dir().join("demo-media");
                     let r = crate::demo::make_demo(&dir).and_then(|mut p| {
                         p.name = "VeloMov demo".into();
-                        let path = util::projects_dir().join(&p.id).join("project.vcut");
+                        let path = util::project_file(&util::projects_dir().join(&p.id));
                         p.save(&path)?;
                         Ok(path)
                     });
@@ -306,9 +365,7 @@ pub fn ui(app: &mut VeloApp, ctx: &egui::Context) {
                 }
                 if pill(ui, ph::TRASH, tr("Delete"), DANGER, Color32::WHITE).clicked() {
                     for path in &paths {
-                        if let Some(dir) = path.parent() {
-                            let _ = std::fs::remove_dir_all(dir);
-                        }
+                        delete_project(path);
                     }
                     app.home.confirm_delete.clear();
                     app.home.selected.clear();
@@ -360,7 +417,7 @@ fn project_card(app: &mut VeloApp, ui: &mut egui::Ui, p: &ProjectSummary, w: f32
     painter.rect_filled(img, cr(10), PANEL2());
     // cover
     let cover = app.home.covers.entry(p.path.clone()).or_insert_with(|| {
-        let cp = p.path.parent()?.join("cover.png");
+        let cp = util::cover_path(&p.path);
         let im = image::open(cp).ok()?.to_rgba8();
         let ci = egui::ColorImage::from_rgba_unmultiplied([im.width() as usize, im.height() as usize], im.as_raw());
         Some(ui.ctx().load_texture(format!("cover-{}", p.path.display()), ci, egui::TextureOptions::LINEAR))
@@ -460,11 +517,9 @@ pub fn duplicate_project(path: &std::path::Path) {
     if let Ok(mut pj) = Project::load(path) {
         pj.id = format!("{:x}", util::new_id());
         pj.name = format!("{} {}", pj.name, tr("copy"));
-        let np = util::projects_dir().join(&pj.id).join("project.vcut");
+        let np = util::project_file(&util::projects_dir().join(&pj.id));
         let _ = pj.save(&np);
-        if let (Some(a), Some(b)) = (path.parent(), np.parent()) {
-            let _ = std::fs::copy(a.join("cover.png"), b.join("cover.png"));
-        }
+        let _ = std::fs::copy(util::cover_path(path), util::cover_path(&np));
     }
 }
 

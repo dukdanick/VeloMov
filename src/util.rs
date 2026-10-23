@@ -164,6 +164,59 @@ pub fn projects_dir() -> PathBuf {
     let _ = std::fs::create_dir_all(&p);
     p
 }
+/// Extension of project files. 0.8.0 and older saved `.vcut`, which still opens.
+pub const PROJECT_EXT: &str = "vmov";
+pub const OLD_PROJECT_EXT: &str = "vcut";
+
+pub fn is_project_file(p: &std::path::Path) -> bool {
+    let e = ext_lower(&p.to_string_lossy());
+    e == PROJECT_EXT || e == OLD_PROJECT_EXT
+}
+
+/// Project file inside a folder of the projects directory.
+pub fn project_file(dir: &std::path::Path) -> PathBuf {
+    dir.join(format!("project.{}", PROJECT_EXT))
+}
+
+/// A `.vcut` project is renamed to `.vmov` in place (kept as is when that is not possible).
+pub fn upgrade_project_file(p: &std::path::Path) -> PathBuf {
+    if ext_lower(&p.to_string_lossy()) == OLD_PROJECT_EXT {
+        let np = p.with_extension(PROJECT_EXT);
+        if np.exists() || std::fs::rename(p, &np).is_ok() {
+            return np;
+        }
+    }
+    p.to_path_buf()
+}
+
+/// Project kept in the projects directory (not one saved elsewhere with "Save as").
+pub fn is_internal_project(p: &std::path::Path) -> bool {
+    p.starts_with(projects_dir())
+}
+
+/// Home-screen cover of a project: next to it in the projects directory, in the data
+/// directory for projects saved elsewhere (so no stray image lands in the user's folder).
+pub fn cover_path(project: &std::path::Path) -> PathBuf {
+    match project.parent() {
+        Some(dir) if is_internal_project(project) => dir.join("cover.png"),
+        _ => {
+            // FNV-1a of the path: stable between runs and builds
+            let h = project.to_string_lossy().bytes().fold(0xcbf29ce484222325u64, |h, b| (h ^ b as u64).wrapping_mul(0x100000001b3));
+            data_dir().join("covers").join(format!("{:016x}.png", h))
+        }
+    }
+}
+
+/// Path with the project extension added when it has another one (or none).
+pub fn with_project_ext(p: PathBuf) -> PathBuf {
+    if ext_lower(&p.to_string_lossy()) == PROJECT_EXT {
+        return p;
+    }
+    let mut s = p.into_os_string();
+    s.push(format!(".{}", PROJECT_EXT));
+    PathBuf::from(s)
+}
+
 pub fn videos_dir() -> PathBuf {
     #[cfg(not(windows))]
     {

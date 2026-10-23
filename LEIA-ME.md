@@ -9,10 +9,10 @@ redes sociais: biblioteca, player, detalhes e linha do tempo.
 
 ## Baixar
 
-**Windows 10/11 (64-bit)**: [VeloMov 0.8.0 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.8.0)
+**Windows 10/11 (64-bit)**: [VeloMov 0.8.1 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.8.1)
 
-* [`VeloMov-0.8.0-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-setup.exe): Instalador
-* [`VeloMov-0.8.0-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-portable.zip): Portátil
+* [`VeloMov-0.8.1-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.1/VeloMov-0.8.1-windows-x64-setup.exe): Instalador
+* [`VeloMov-0.8.1-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.1/VeloMov-0.8.1-windows-x64-portable.zip): Portátil
 
 **Linux:** Suporte a AppImage em breve! Por enquanto, compile o programa a partir do código-fonte usando `install.sh`. Consulte o [guia de instalação](#1-instalar).
 
@@ -60,9 +60,9 @@ Para remover: `./uninstall.sh` (os projetos e os modelos de fala baixados são m
 
 ### Windows
 
-* `VeloMov-0.8.0-windows-x64-setup.exe` — **instalador** (em português; atalhos no Menu Iniciar e na
-  Área de Trabalho, abre arquivos `.vcut`, desinstala pelo Windows). Não precisa de administrador.
-* `VeloMov-0.8.0-windows-x64-portable.zip` — **portátil**: descompacte em qualquer pasta/pendrive e
+* `VeloMov-0.8.1-windows-x64-setup.exe` — **instalador** (em português; atalhos no Menu Iniciar e na
+  Área de Trabalho, abre arquivos `.vmov`, desinstala pelo Windows). Não precisa de administrador.
+* `VeloMov-0.8.1-windows-x64-portable.zip` — **portátil**: descompacte em qualquer pasta/pendrive e
   abra `velomov.exe`. Projetos, configurações e cache ficam na pasta `data` ao lado do programa
   (o arquivo `portable.txt` liga isso; apague-o para usar `%APPDATA%\VeloMov`).
 
@@ -87,7 +87,7 @@ código: `powershell -ExecutionPolicy Bypass -File packaging\windows\build-windo
 ## 2. Abrir
 
 * Pelo menu de aplicativos: **VeloMov** (categoria Multimídia), ou no terminal: `velomov`
-* `velomov projeto.vcut` abre um projeto; `velomov video1.mp4 video2.mp4` cria um projeto com os
+* `velomov projeto.vmov` abre um projeto; `velomov video1.mp4 video2.mp4` cria um projeto com os
   arquivos (entram na faixa principal, em ordem)
 * sem instalar: `./run.sh`
 
@@ -273,13 +273,13 @@ packaging/    .desktop do Linux, build do whisper, build/instalador do Windows
   panorâmica, mais um pequeno reverb Schroeder.
 
 ```bash
-velomov --make-demo PASTA               # gera mídia de exemplo e PASTA/demo.vcut
-velomov --new-project P.vcut a.mp4 b.mp4
-velomov --render-frame P.vcut 2.5 out.png --height 720
-velomov --export P.vcut out.mp4 --res 1080 --codec hevc --quality higher
-velomov --captions P.vcut --lang pt --style karaoke [--model base] [--no-gpu]
+velomov --make-demo PASTA               # gera mídia de exemplo e PASTA/demo.vmov
+velomov --new-project P.vmov a.mp4 b.mp4
+velomov --render-frame P.vmov 2.5 out.png --height 720
+velomov --export P.vmov out.mp4 --res 1080 --codec hevc --quality higher
+velomov --captions P.vmov --lang pt --style karaoke [--model base] [--no-gpu]
 velomov --catalog-sheet PASTA           # folhas com todas as transições/efeitos/filtros/animações
-VELOMOV_SCRIPT=teste.txt velomov P.vcut # repete entrada da interface (veja src/app/script.rs)
+VELOMOV_SCRIPT=teste.txt velomov P.vmov # repete entrada da interface (veja src/app/script.rs)
 VELOMOV_STATS=1 velomov                 # estatísticas de quadros atrasados
 VELOMOV_DEBUG_DECODE=1 velomov          # registra reinícios do decodificador
 ```

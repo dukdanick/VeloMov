@@ -9,10 +9,10 @@ social-video editors.
 
 ## Download
 
-**Windows 10/11 (64-bit)**: [VeloMov 0.8.0 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.8.0)
+**Windows 10/11 (64-bit)**: [VeloMov 0.8.1 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.8.1)
 
-* [`VeloMov-0.8.0-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-setup.exe): installer
-* [`VeloMov-0.8.0-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-portable.zip): portable, no installation
+* [`VeloMov-0.8.1-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.1/VeloMov-0.8.1-windows-x64-setup.exe): installer
+* [`VeloMov-0.8.1-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.1/VeloMov-0.8.1-windows-x64-portable.zip): portable, no installation
 
 **Linux**: AppImage coming soon! In the meantime, build from source. see [Install](#1-install).
 
@@ -60,9 +60,9 @@ To remove: `./uninstall.sh` (projects and downloaded speech models are kept).
 
 ### Windows
 
-* `VeloMov-0.8.0-windows-x64-setup.exe` — **installer** (Portuguese/English; Start menu and desktop
-  shortcuts, opens `.vcut` files, uninstalls from Windows settings). No administrator needed.
-* `VeloMov-0.8.0-windows-x64-portable.zip` — **portable**: unzip anywhere (or onto a USB stick) and
+* `VeloMov-0.8.1-windows-x64-setup.exe` — **installer** (Portuguese/English; Start menu and desktop
+  shortcuts, opens `.vmov` files, uninstalls from Windows settings). No administrator needed.
+* `VeloMov-0.8.1-windows-x64-portable.zip` — **portable**: unzip anywhere (or onto a USB stick) and
   run `velomov.exe`. Projects, settings and cache stay in the `data` folder next to the program
   (the `portable.txt` file turns this on; delete it to use `%APPDATA%\VeloMov`).
 
@@ -87,7 +87,7 @@ folder: `powershell -ExecutionPolicy Bypass -File packaging\windows\build-window
 ## 2. Open
 
 * From the application menu: **VeloMov** (Multimedia), or in a terminal: `velomov`
-* `velomov project.vcut` opens a project; `velomov clip1.mp4 clip2.mp4` makes a project with the
+* `velomov project.vmov` opens a project; `velomov clip1.mp4 clip2.mp4` makes a project with the
   files (on the main track, in order)
 * without installing: `./run.sh`
 
@@ -271,13 +271,13 @@ packaging/    Linux .desktop, whisper build, Windows build/installer
   plus a small Schroeder reverb.
 
 ```bash
-velomov --make-demo DIR                 # generate demo media and DIR/demo.vcut
-velomov --new-project P.vcut a.mp4 b.mp4
-velomov --render-frame P.vcut 2.5 out.png --height 720
-velomov --export P.vcut out.mp4 --res 1080 --codec hevc --quality higher
-velomov --captions P.vcut --lang pt --style karaoke [--model base] [--no-gpu]
+velomov --make-demo DIR                 # generate demo media and DIR/demo.vmov
+velomov --new-project P.vmov a.mp4 b.mp4
+velomov --render-frame P.vmov 2.5 out.png --height 720
+velomov --export P.vmov out.mp4 --res 1080 --codec hevc --quality higher
+velomov --captions P.vmov --lang pt --style karaoke [--model base] [--no-gpu]
 velomov --catalog-sheet DIR             # contact sheets of every transition/effect/filter/animation
-VELOMOV_SCRIPT=test.txt velomov P.vcut  # replay UI input (see src/app/script.rs)
+VELOMOV_SCRIPT=test.txt velomov P.vmov  # replay UI input (see src/app/script.rs)
 VELOMOV_STATS=1 velomov                 # late-frame statistics
 VELOMOV_DEBUG_DECODE=1 velomov          # log decoder restarts
 ```

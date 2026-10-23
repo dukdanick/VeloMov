@@ -1,5 +1,5 @@
 ; Inno Setup script for the VeloMov installer. Built by packaging/windows/build-cross.sh:
-;   ISCC /DAppVersion=0.8.0 /DSourceDir=<staged folder> /DOutputDir=<dist> /DRepoDir=<repo> velomov.iss
+;   ISCC /DAppVersion=0.8.1 /DSourceDir=<staged folder> /DOutputDir=<dist> /DRepoDir=<repo> velomov.iss
 #ifndef AppVersion
   #define AppVersion "0.0.0"
 #endif
@@ -35,7 +35,7 @@ Name: "en"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
-Name: "assoc"; Description: "{cm:AssocFileExtension,VeloMov,.vcut}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: "assoc"; Description: "{cm:AssocFileExtension,VeloMov,.vmov}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -46,6 +46,8 @@ Name: "{group}\{cm:UninstallProgram,VeloMov}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\VeloMov"; Filename: "{app}\velomov.exe"; Tasks: desktopicon
 
 [Registry]
+Root: HKA; Subkey: "Software\Classes\.vmov"; ValueType: string; ValueName: ""; ValueData: "VeloMov.Project"; Flags: uninsdeletevalue; Tasks: assoc
+; projects from 0.8.0 and older
 Root: HKA; Subkey: "Software\Classes\.vcut"; ValueType: string; ValueName: ""; ValueData: "VeloMov.Project"; Flags: uninsdeletevalue; Tasks: assoc
 Root: HKA; Subkey: "Software\Classes\VeloMov.Project"; ValueType: string; ValueName: ""; ValueData: "VeloMov project"; Flags: uninsdeletekey; Tasks: assoc
 Root: HKA; Subkey: "Software\Classes\VeloMov.Project\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\velomov.exe,0"; Tasks: assoc

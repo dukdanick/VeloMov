@@ -239,6 +239,7 @@ pub enum BgMsg {
 pub enum FilePurpose {
     Import,
     OpenProject,
+    SaveAs,
     ExportDir,
     Relink(u64),
 }
@@ -627,7 +628,7 @@ impl VeloApp {
         let mut p = Project::new_named(&default_project_name());
         p.fps = 30.0;
         let dir = util::projects_dir().join(&p.id);
-        self.path = Some(dir.join("project.vcut"));
+        self.path = Some(util::project_file(&dir));
         self.project = p;
         self.screen = Screen::Editor;
         self.rev += 1;
@@ -755,8 +756,10 @@ impl VeloApp {
     pub fn open_project(&mut self, path: &std::path::Path) -> anyhow::Result<()> {
         let p = Project::load(path)?;
         self.close_project();
+        let path = util::upgrade_project_file(path);
+        home::remember_project(&path);
         self.project = p;
-        self.path = Some(path.to_path_buf());
+        self.path = Some(path);
         self.screen = Screen::Editor;
         self.rev += 1;
         self.dirty = false;
@@ -808,11 +811,11 @@ impl VeloApp {
     }
 
     /// Save the project JSON; `cover` also refreshes the home-screen cover from the preview.
-    pub fn save_project_ex(&mut self, quiet: bool, cover: bool) {
+    pub fn save_project_ex(&mut self, quiet: bool, cover: bool) -> bool {
         let path = match &self.path {
             Some(p) => p.clone(),
             None => {
-                let p = util::projects_dir().join(&self.project.id).join("project.vcut");
+                let p = util::project_file(&util::projects_dir().join(&self.project.id));
                 self.path = Some(p.clone());
                 p
             }
@@ -827,8 +830,49 @@ impl VeloApp {
                 if !quiet {
                     self.toast(tr("Project saved"));
                 }
+                true
             }
-            Err(e) => self.toast_err(&format!("{}: {}", tr("Save failed"), e)),
+            Err(e) => {
+                self.toast_err(&format!("{}: {}", tr("Save failed"), e));
+                false
+            }
+        }
+    }
+
+    /// "Save as…": ask where, then keep editing the project in that file.
+    pub fn save_project_as(&mut self) {
+        let tx = self.bg_tx.clone();
+        let start = match &self.path {
+            Some(p) if !util::is_internal_project(p) => p.parent().map(|d| d.to_path_buf()).unwrap_or_else(util::videos_dir),
+            _ => util::videos_dir(),
+        };
+        let name = match export_ui::sanitize(self.project.name.trim()) {
+            n if n.is_empty() => "VeloMov".to_string(),
+            n => n,
+        };
+        let name = format!("{}.{}", name, util::PROJECT_EXT);
+        std::thread::spawn(move || {
+            let paths: Vec<PathBuf> = rfd::FileDialog::new()
+                .set_title("Save project as")
+                .set_directory(&start)
+                .set_file_name(name)
+                .add_filter("VeloMov project", &[util::PROJECT_EXT])
+                .save_file()
+                .into_iter()
+                .collect();
+            let _ = tx.send(BgMsg::Files { purpose: FilePurpose::SaveAs, paths });
+        });
+    }
+
+    pub fn finish_save_as(&mut self, path: PathBuf) {
+        let path = util::with_project_ext(path);
+        self.flush_edit();
+        let old = self.path.replace(path.clone());
+        if self.save_project_ex(true, true) {
+            home::remember_project(&path);
+            self.toast(&format!("{}: {}", tr("Project saved"), util::file_name(&path.to_string_lossy())));
+        } else {
+            self.path = old;
         }
     }
 
@@ -851,9 +895,11 @@ impl VeloApp {
             frames.video.stop_all();
             (w, h) = (cw, ch);
         }
-        let out = path.parent().map(|p| p.join("cover.png"));
+        let out = util::cover_path(path);
         let job = move || {
-            let Some(out) = out else { return };
+            if let Some(dir) = out.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
             let Some(img) = image::RgbaImage::from_raw(w, h, data) else { return };
             let k = (320.0 / w.max(1) as f32).min(180.0 / h.max(1) as f32).min(1.0);
             let (tw, th) = (((w as f32 * k) as u32).max(2), ((h as f32 * k) as u32).max(2));
@@ -896,11 +942,12 @@ impl VeloApp {
                 FilePurpose::OpenProject => dlg
                     .set_title("Open project")
                     .set_directory(util::projects_dir())
-                    .add_filter("VeloMov project", &["vcut", "json"])
+                    .add_filter("VeloMov project", &[util::PROJECT_EXT, util::OLD_PROJECT_EXT, "json"])
                     .pick_file()
                     .into_iter()
                     .collect(),
                 FilePurpose::ExportDir => dlg.set_title("Export to").pick_folder().into_iter().collect(),
+                FilePurpose::SaveAs => vec![],
             };
             let _ = tx.send(BgMsg::Files { purpose, paths });
         });
@@ -917,7 +964,7 @@ impl VeloApp {
             if p.is_dir() {
                 continue;
             }
-            if s.ends_with(".vcut") {
+            if util::is_project_file(&p) {
                 if let Err(e) = self.open_project(&p) {
                     self.toast_err(&e.to_string());
                 }
@@ -1136,6 +1183,7 @@ impl VeloApp {
                                 self.toast_err(&format!("{}: {}", tr("Could not open project"), e));
                             }
                         }
+                        FilePurpose::SaveAs => self.finish_save_as(paths[0].clone()),
                         FilePurpose::ExportDir => {
                             if let Some(d) = self.export_dialog.as_mut() {
                                 d.dir = paths[0].clone();
@@ -1223,7 +1271,7 @@ impl VeloApp {
         let dropped: Vec<PathBuf> = ctx.input(|i| i.raw.dropped_files.iter().filter_map(|f| f.path.clone()).collect());
         if !dropped.is_empty() {
             if self.screen == Screen::Home {
-                if dropped.len() == 1 && dropped[0].extension().map(|e| e == "vcut").unwrap_or(false) {
+                if dropped.len() == 1 && util::is_project_file(&dropped[0]) {
                     let p = dropped[0].clone();
                     if let Err(e) = self.open_project(&p) {
                         self.toast_err(&e.to_string());

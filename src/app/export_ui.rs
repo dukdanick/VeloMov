@@ -51,7 +51,7 @@ impl ExportDialog {
     }
 }
 
-fn sanitize(s: &str) -> String {
+pub fn sanitize(s: &str) -> String {
     s.chars().map(|c| if c == '/' || c == '\\' || c == ':' { '-' } else { c }).collect()
 }
 
@@ -89,6 +89,10 @@ pub fn topbar(app: &mut VeloApp, ui: &mut egui::Ui) {
             }
             if item(ui, ph::FLOPPY_DISK, "Save", "Ctrl+S") {
                 app.save_project(false);
+                ui.close_menu();
+            }
+            if item(ui, ph::FLOPPY_DISK_BACK, "Save as…", "Ctrl+Alt+S") {
+                app.save_project_as();
                 ui.close_menu();
             }
             if item(ui, ph::DOWNLOAD_SIMPLE, "Import media…", "Ctrl+I") {

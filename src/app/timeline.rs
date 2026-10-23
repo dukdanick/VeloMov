@@ -279,6 +279,8 @@ pub fn ui(app: &mut VeloApp, ui: &mut egui::Ui) {
     let t_vis0 = geo.t(content.left());
     let t_vis1 = geo.t(content.right());
     let mut hovered_clip: Option<(u64, usize, Rect)> = None;
+    // keyframe diamonds of the selected clips (centre, under the playhead), drawn last
+    let mut diamonds: Vec<(Pos2, bool)> = vec![];
     for (i, row) in &rows {
         if row.bottom() < ruler.bottom() || row.top() > body.bottom() {
             continue;
@@ -297,6 +299,12 @@ pub fn ui(app: &mut VeloApp, ui: &mut egui::Ui) {
                 _ => 0.0,
             };
             draw_clip(app, ui, &clip_painter, &trk, c, r, sel.clips.contains(&c.id), &geo, label_dx);
+            if sel.clips.contains(&c.id) {
+                let t_local = app.playhead - c.start;
+                for k in c.kf.times() {
+                    diamonds.push((Pos2::new(geo.x(c.start + k), r.bottom() - 8.0), (k - t_local).abs() <= KEY_EPS));
+                }
+            }
             if let Some(p) = pointer {
                 if r.contains(p) && content.contains(p) {
                     hovered_clip = Some((c.id, *i, r));
@@ -381,6 +389,13 @@ pub fn ui(app: &mut VeloApp, ui: &mut egui::Ui) {
                 junction_hit = Some(a.id);
             }
         }
+    }
+
+    // keyframes on top of everything: a key at either end of a clip used to hide under the
+    // white trim handle or the transition drawn over the cut
+    for (c, on) in diamonds {
+        let pts = vec![Pos2::new(c.x, c.y - 5.0), Pos2::new(c.x + 5.0, c.y), Pos2::new(c.x, c.y + 5.0), Pos2::new(c.x - 5.0, c.y)];
+        clip_painter.add(Shape::convex_polygon(pts, if on { ACCENT() } else { KEYFRAME }, Stroke::new(1.5_f32, Color32::BLACK)));
     }
 
     // markers
@@ -835,17 +850,6 @@ fn draw_clip(
             prop(9.0),
             Color32::from_white_alpha(170),
         );
-    }
-    // keyframes
-    if selected && !c.kf.is_empty() {
-        let t_local = app.playhead - c.start;
-        for k in c.kf.times() {
-            let x = geo.x(c.start + k);
-            let cy = r.bottom() - 8.0;
-            let on = (k - t_local).abs() <= KEY_EPS;
-            let pts = vec![Pos2::new(x, cy - 5.0), Pos2::new(x + 5.0, cy), Pos2::new(x, cy + 5.0), Pos2::new(x - 5.0, cy)];
-            p.add(Shape::convex_polygon(pts, if on { ACCENT() } else { KEYFRAME }, Stroke::new(1.0_f32, Color32::BLACK)));
-        }
     }
     // border
     if selected {

@@ -92,6 +92,7 @@ pub const TABLE: &[(&str, &str, &[(&str, &str, bool)])] = &[
             ("Ctrl+N", "New project", true),
             ("Ctrl+I", "Import media", true),
             ("Ctrl+S", "Save", false),
+            ("Ctrl+Alt+S", "Save as…", false),
             ("Ctrl+E", "Export", true),
             ("Ctrl+Z / Ctrl+Shift+Z", "Undo / redo", true),
             ("Ctrl+C / X / V", "Copy / cut / paste", true),
@@ -251,6 +252,7 @@ pub fn handle(app: &mut VeloApp, ctx: &egui::Context) {
                 });
             }
             (Key::S, true, false, false) => app.save_project(false),
+            (Key::S, true, false, true) => app.save_project_as(),
             (Key::S, false, false, false) => {
                 let a = app.project.preview_axis;
                 app.edit(|p| p.preview_axis = !a);

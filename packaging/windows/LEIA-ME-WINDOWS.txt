@@ -8,7 +8,7 @@ Requisitos: Windows 10 ou 11 (64 bits), placa de vídeo com DirectX 12 ou Vulkan
 
 INSTALADOR
   Rode VeloMov-...-setup.exe. Ele cria atalhos no Menu Iniciar (e na Área de
-  Trabalho, se marcar) e associa arquivos .vcut. Desinstale pelo Painel de Controle
+  Trabalho, se marcar) e associa arquivos .vmov. Desinstale pelo Painel de Controle
   ou em Configurações > Aplicativos.
 
 PORTÁTIL
