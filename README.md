@@ -161,7 +161,7 @@ GIF and WebP work as photos (1 frame) or as video (animated), keeping transparen
 
 | Model | Size | What for |
 |---|---|---|
-| Tiny | 78 MB | fastest; more mistakes (above all in Portuguese and with noise) |
+| Tiny | 78 MB | fastest; more mistakes |
 | **Base** (default) | 142 MB | balanced: quick and good for most videos |
 | Small | 488 MB | more accurate for Portuguese, accents and noisy audio; ~3× slower |
 | Medium | 1.5 GB | very accurate; slow on the processor, about 2 GB of memory |
