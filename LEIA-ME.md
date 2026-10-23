@@ -60,8 +60,6 @@ Para remover: `./uninstall.sh` (os projetos e os modelos de fala baixados são m
 
 ### Windows
 
-Os arquivos prontos ficam em `dist/`:
-
 * `VeloMov-0.8.0-windows-x64-setup.exe` — **instalador** (em português; atalhos no Menu Iniciar e na
   Área de Trabalho, abre arquivos `.vcut`, desinstala pelo Windows). Não precisa de administrador.
 * `VeloMov-0.8.0-windows-x64-portable.zip` — **portátil**: descompacte em qualquer pasta/pendrive e
