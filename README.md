@@ -21,6 +21,8 @@ settings in tabs and many more ways to customise the interface — see the [chan
 
 ![Editor](docs/editor.png)
 
+![Menu](docs/home.png)
+
 ## Highlights
 
 | | |
