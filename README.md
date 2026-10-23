@@ -16,7 +16,6 @@ social-video editors.
 
 **Linux**: AppImage coming soon! In the meantime, build from source. see [Install](#1-install).
 
-**What's new in 0.9.0**: favourite and recently used fonts with previews, a new home screen,
 settings in tabs and many more ways to customise the interface — see the [changelog](./CHANGELOG.md).
 
 ![Editor](docs/editor.png)
