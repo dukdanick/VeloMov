@@ -139,8 +139,6 @@ Os projetos são salvos sozinhos em `~/.local/share/velomov/projects` (Windows:
 Na tela inicial, **Selecionar** (ou `Ctrl`+clique, ou o círculo no canto de um projeto) marca
 vários projetos de uma vez para **Duplicar** ou **Excluir**; `Ctrl+A` marca todos.
 
-GIF e WebP funcionam como fotos (1 quadro) ou como vídeo (animados), mantendo a transparência.
-
 ### 3a. Legendas automáticas animadas
 
 1. Aba **Legendas** na biblioteca (à esquerda) → **Legendas automáticas**.
