@@ -2,6 +2,7 @@
 
 pub mod captions;
 pub mod export_ui;
+pub mod fonts;
 pub mod home;
 pub mod i18n;
 pub mod inspector;
@@ -133,6 +134,11 @@ pub struct Settings {
     pub caption_lang: String,
     pub whisper_threads: u32,
     pub whisper_gpu: bool,
+    /// Interface look and layout (gradient, corners, panel positions…).
+    pub ui: theme::UiPrefs,
+    /// Text fonts marked with a star, and the last ones used (newest first).
+    pub fav_fonts: Vec<String>,
+    pub recent_fonts: Vec<String>,
     /// Format of this file (older files lack it: 0, and are migrated on load).
     #[serde(default)]
     pub version: u32,
@@ -159,6 +165,9 @@ impl Default for Settings {
             caption_lang: "auto".into(),
             whisper_threads: 0,
             whisper_gpu: true,
+            ui: theme::UiPrefs::default(),
+            fav_fonts: vec![],
+            recent_fonts: vec![],
             version: Self::VERSION,
         }
     }
@@ -178,6 +187,18 @@ mod settings_tests {
         // a current file keeps the user's choice
         let cur = serde_json::to_string(&Settings { hw_decode: false, ..Settings::default() }).unwrap();
         assert!(!Settings::migrate(serde_json::from_str(&cur).unwrap()).hw_decode);
+    }
+
+    #[test]
+    fn settings_from_0_8_get_default_interface() {
+        let s = Settings::migrate(serde_json::from_str(r#"{"lang":"pt","theme":"plum","version":2}"#).unwrap());
+        assert_eq!(s.ui, super::theme::UiPrefs::default());
+        assert!(s.fav_fonts.is_empty() && s.recent_fonts.is_empty());
+        assert_eq!(s.theme, "plum");
+        // a partial interface block keeps everything else at the defaults
+        let s: Settings = serde_json::from_str(r#"{"ui":{"library_right":true,"grad_mode":2}}"#).unwrap();
+        assert!(s.ui.library_right && s.ui.animations);
+        assert_eq!((s.ui.grad_mode, s.ui.corner, s.ui.scale), (2, 10, 1.0));
     }
 }
 
@@ -340,6 +361,7 @@ pub struct VeloApp {
     pub fullscreen: bool,
     pub home: home::HomeState,
     pub font_list: Option<Vec<String>>,
+    pub fonts: fonts::FontPreviews,
     pub junction: Option<u64>,
     pub sfx_preview: Option<Instant>,
     pub rename_project: Option<String>,
@@ -347,6 +369,8 @@ pub struct VeloApp {
     last_gc: Instant,
     pub show_about: bool,
     pub show_settings: bool,
+    /// Open tab of the settings window.
+    pub settings_tab: settings_ui::Tab,
     pub new_dialog: Option<new_project::NewProject>,
     silence_cache: Option<((u64, u64, u64, u64, u64), Vec<(Us, Us)>)>,
     /// Bytes in the cache folder (measured when the settings open).
@@ -407,7 +431,9 @@ impl VeloApp {
         };
         i18n::set_lang(lang);
         theme::set_palette(&settings.theme, settings.accent);
+        theme::set_ui_prefs(settings.ui);
         theme::apply(&cc.egui_ctx);
+        theme::apply_scale(&cc.egui_ctx);
         if settings.cache_days > 0 {
             // before anything opens: nothing in the cache is in use yet
             let (n, bytes) = util::clean_cache(settings.cache_days);
@@ -476,6 +502,7 @@ impl VeloApp {
             fullscreen: false,
             home: home::HomeState::default(),
             font_list: None,
+            fonts: Default::default(),
             junction: None,
             sfx_preview: None,
             rename_project: None,
@@ -483,6 +510,7 @@ impl VeloApp {
             last_gc: Instant::now(),
             show_about: false,
             show_settings: false,
+            settings_tab: settings_ui::Tab::Appearance,
             new_dialog: None,
             silence_cache: None,
             cache_size: None,
@@ -2373,8 +2401,11 @@ impl VeloApp {
             });
         } else {
             // panels are rounded cards floating on the dark background
-            let g = theme::GAP;
-            let card = |fill: Color32, m: egui::Margin| egui::Frame::new().fill(fill).corner_radius(theme::CARD_R).outer_margin(m);
+            let g = theme::GAP();
+            let prefs = theme::ui_prefs();
+            let card = |fill: Color32, m: egui::Margin| {
+                egui::Frame::new().fill(fill).corner_radius(theme::CARD_R()).stroke(theme::card_stroke()).outer_margin(m)
+            };
             egui::TopBottomPanel::top("topbar")
                 .exact_height(46.0)
                 .show_separator_line(false)
@@ -2383,38 +2414,61 @@ impl VeloApp {
                     export_ui::topbar(self, ui);
                 });
             let total_h = ctx.screen_rect().height();
-            egui::TopBottomPanel::bottom("timeline")
+            let timeline = if prefs.timeline_top {
+                egui::TopBottomPanel::top("timeline")
+                    .frame(card(theme::TIMELINE_BG(), egui::Margin { left: 2 * g, right: 2 * g, top: 0, bottom: g }))
+            } else {
+                egui::TopBottomPanel::bottom("timeline")
+                    .frame(card(theme::TIMELINE_BG(), egui::Margin { left: 2 * g, right: 2 * g, top: g, bottom: 2 * g }))
+            };
+            timeline
                 .resizable(true)
                 .show_separator_line(false)
                 .default_height((total_h * 0.42).clamp(220.0, 520.0))
                 .min_height(170.0)
                 .max_height(total_h * 0.7)
-                .frame(card(theme::TIMELINE_BG(), egui::Margin { left: 2 * g, right: 2 * g, top: g, bottom: 2 * g }))
                 .show(ctx, |ui| {
                     timeline::ui(self, ui);
                 });
             let w = ctx.screen_rect().width();
-            egui::SidePanel::left("library")
+            // the media library and the inspector can swap sides
+            let side = |id: &str, left: bool| {
+                if left {
+                    egui::SidePanel::left(id.to_string())
+                } else {
+                    egui::SidePanel::right(id.to_string())
+                }
+            };
+            let bottom = if prefs.timeline_top { 2 * g } else { g };
+            let outer = |left: bool| {
+                if left {
+                    egui::Margin { left: 2 * g, right: g, top: 0, bottom }
+                } else {
+                    egui::Margin { left: g, right: 2 * g, top: 0, bottom }
+                }
+            };
+            let lib_left = !prefs.library_right;
+            side("library", lib_left)
                 .resizable(true)
                 .show_separator_line(false)
                 .default_width((w * 0.285).clamp(340.0, 540.0))
                 .min_width(300.0)
                 .max_width((w * 0.45).max(340.0))
-                .frame(card(theme::PANEL(), egui::Margin { left: 2 * g, right: g, top: 0, bottom: g }))
+                .frame(card(theme::PANEL(), outer(lib_left)))
                 .show(ctx, |ui| {
                     library::ui(self, ui);
                 });
-            egui::SidePanel::right("inspector")
+            side("inspector", !lib_left)
                 .resizable(true)
                 .show_separator_line(false)
                 .default_width((w * 0.24).clamp(300.0, 440.0))
                 .min_width(280.0)
                 .max_width((w * 0.4).max(300.0))
-                .frame(card(theme::PANEL(), egui::Margin { left: g, right: 2 * g, top: 0, bottom: g }))
+                .frame(card(theme::PANEL(), outer(!lib_left)))
                 .show(ctx, |ui| {
                     inspector::ui(self, ui);
                 });
-            egui::CentralPanel::default().frame(card(theme::PANEL(), egui::Margin { left: g, right: g, top: 0, bottom: g })).show(
+            egui::CentralPanel::default().frame(card(theme::PANEL(), egui::Margin { left: g, right: g, top: 0, bottom })).show(
                 ctx,
                 |ui| {
                     player::ui(self, ui);
@@ -2458,12 +2512,13 @@ impl VeloApp {
             return;
         }
         let screen = ctx.screen_rect();
-        let mut y = screen.top() + 58.0;
+        let bottom = theme::ui_prefs().toasts_bottom;
+        let mut y = if bottom { screen.bottom() - 28.0 } else { screen.top() + 58.0 };
         let toasts = self.toasts.clone();
         for (i, (msg, _, err)) in toasts.iter().enumerate() {
             egui::Area::new(egui::Id::new(("toast", i)))
                 .fixed_pos(egui::pos2(screen.center().x, y))
-                .pivot(egui::Align2::CENTER_TOP)
+                .pivot(if bottom { egui::Align2::CENTER_BOTTOM } else { egui::Align2::CENTER_TOP })
                 .order(egui::Order::Tooltip)
                 .show(ctx, |ui| {
                     egui::Frame::new()
@@ -2474,7 +2529,7 @@ impl VeloApp {
                             ui.label(egui::RichText::new(msg).color(Color32::WHITE));
                         });
                 });
-            y += 40.0;
+            y += if bottom { -40.0 } else { 40.0 };
         }
         ctx.request_repaint_after(Duration::from_millis(200));
     }

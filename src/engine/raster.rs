@@ -304,6 +304,20 @@ impl Raster {
         }
     }
 
+    /// One line of `text` in `family` (white, premultiplied RGBA): the font picker's previews.
+    pub fn font_sample(&mut self, family: &str, text: &str, px: f32, bold: bool, italic: bool) -> RasterImg {
+        let mut guard = fonts_slot().lock().unwrap();
+        if guard.is_none() {
+            *guard = Some(FontSystem::new());
+        }
+        let fs = guard.as_mut().unwrap();
+        let text = if text.trim().is_empty() { "Aa" } else { text };
+        let laid = self.layout(fs, text, family, px.clamp(4.0, 400.0), bold, italic, 0, 0.0, 0.0, None, false);
+        drop(guard);
+        let td = TextData { font: family.to_string(), bold, italic, ..TextData::default() };
+        self.paint_text(&td, px, &laid)
+    }
+
     /// Rasterise a text clip. `scale` converts text size units into pixels.
     pub fn text(&mut self, td: &TextData, scale: f32, visible: Option<usize>) -> Arc<RasterImg> {
         let key = hash_text(td, scale, visible);

@@ -55,7 +55,7 @@ pub fn icon_btn_sized(ui: &mut Ui, icon: &str, tip: &str, enabled: bool, active:
 #[derive(Default)]
 pub struct BrandTex {
     logos: Vec<(u32, egui::TextureHandle)>,
-    grad: Option<(Color32, Color32, egui::TextureHandle)>,
+    grad: Option<(Color32, Color32, u8, egui::TextureHandle)>,
 }
 
 impl BrandTex {
@@ -89,20 +89,36 @@ impl BrandTex {
         Some(id)
     }
 
-    /// Horizontal brand gradient (GRAD_A() -> GRAD_B()) to fill shapes with.
+    /// Brand gradient (GRAD_A() -> GRAD_B(), in the direction chosen in the settings)
+    /// to fill shapes with: use it with UVs (0,0)-(1,1).
     pub fn grad(&mut self, ctx: &egui::Context) -> egui::TextureId {
-        let (a, b) = (GRAD_A(), GRAD_B());
-        if let Some((ga, gb, t)) = &self.grad {
-            if (*ga, *gb) == (a, b) {
+        let (a, b, dir) = (GRAD_A(), GRAD_B(), ui_prefs().grad_dir);
+        if let Some((ga, gb, gd, t)) = &self.grad {
+            if (*ga, *gb, *gd) == (a, b, dir) {
                 return t.id();
             }
         }
-        // (re)made when the accent colour changes
-        let n = 128;
-        let px: Vec<Color32> = (0..n).map(|i| lerp_color(a, b, i as f32 / (n - 1) as f32)).collect();
-        let t = ctx.load_texture("brand-grad", egui::ColorImage { size: [n, 1], pixels: px }, egui::TextureOptions::LINEAR);
+        // (re)made when the accent colour or the gradient settings change
+        let img = match dir {
+            1 => {
+                let n = 64;
+                let px = (0..n * n)
+                    .map(|i| lerp_color(a, b, ((i % n) + (i / n)) as f32 / (2 * (n - 1)) as f32))
+                    .collect();
+                egui::ColorImage { size: [n, n], pixels: px }
+            }
+            2 => {
+                let n = 128;
+                egui::ColorImage { size: [1, n], pixels: (0..n).map(|i| lerp_color(a, b, i as f32 / (n - 1) as f32)).collect() }
+            }
+            _ => {
+                let n = 128;
+                egui::ColorImage { size: [n, 1], pixels: (0..n).map(|i| lerp_color(a, b, i as f32 / (n - 1) as f32)).collect() }
+            }
+        };
+        let t = ctx.load_texture("brand-grad", img, egui::TextureOptions::LINEAR);
         let id = t.id();
-        self.grad = Some((a, b, t));
+        self.grad = Some((a, b, dir, t));
         id
     }
 }

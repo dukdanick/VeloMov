@@ -9,12 +9,16 @@ redes sociais: biblioteca, player, detalhes e linha do tempo.
 
 ## Baixar
 
-**Windows 10/11 (64-bit)**: [VeloMov 0.8.1 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.8.1)
+**Windows 10/11 (64-bit)**: [VeloMov 0.9.0 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.9.0)
 
-* [`VeloMov-0.8.1-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.1/VeloMov-0.8.1-windows-x64-setup.exe): Instalador
-* [`VeloMov-0.8.1-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.1/VeloMov-0.8.1-windows-x64-portable.zip): Portátil
+* [`VeloMov-0.9.0-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.9.0/VeloMov-0.9.0-windows-x64-setup.exe): Instalador
+* [`VeloMov-0.9.0-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.9.0/VeloMov-0.9.0-windows-x64-portable.zip): Portátil
 
 **Linux:** Suporte a AppImage em breve! Por enquanto, compile o programa a partir do código-fonte usando `install.sh`. Consulte o [guia de instalação](#1-instalar).
+
+**Novidades da 0.9.0**: fontes favoritas e usadas recentemente com prévia, nova tela inicial,
+configurações em abas e muito mais jeitos de personalizar a interface — veja as
+[novidades](./CHANGELOG.pt-BR.md).
 
 ![Editor](docs/editor.png)
 
@@ -32,7 +36,8 @@ redes sociais: biblioteca, player, detalhes e linha do tempo.
 | **Ferramentas de vídeo** | Gizmo de transformação no player (mover/escalar/girar com encaixe no centro), recorte, fundo desfocado/colorido, 14 modos de mesclagem, máscaras (linear, espelho, círculo, retângulo, coração, estrela) com suavização, chroma key, velocidade 0,1×–100× e curvas de velocidade (Montagem, Herói, Bala, Corte seco, Flash de entrada/saída, Velocity). |
 | **Áudio** | Forma de onda, volume (dB) com quadros-chave, fade de entrada/saída, remover silêncios, reduzir ruído, efeitos de voz, efeitos sonoros sintetizados (whoosh, chicote, pop, boom, riser…), mudança de velocidade mantendo o tom. |
 | **Legendas automáticas** | Reconhecimento de fala com whisper.cpp, no seu computador (na placa de vídeo via Vulkan quando dá). Legendas com o tempo de cada palavra em 12 estilos animados — karaokê, destaque, caixa na palavra, pop, quicar, revelar, uma palavra, brilho, sublinhado, holofote, balão, clássica — trocados para todas de uma vez. Modelo de fala à escolha (tiny … large-v3, baixado no primeiro uso), explicado nas Configurações. Corrigir uma palavra mantém o tempo. |
-| **Texto e adesivos** | Qualquer fonte do sistema, contorno, caixa de fundo, sombra, espaçamento de letras/linhas, predefinições; adesivos vetoriais e emoji. |
+| **Texto e adesivos** | Qualquer fonte do sistema — cada uma com prévia nela mesma, com favoritas (☆) e as usadas recentemente no topo —, contorno, caixa de fundo, sombra, espaçamento de letras/linhas, predefinições; adesivos vetoriais e emoji. |
+| **Sua interface** | 5 temas, qualquer cor de destaque, gradiente (automático, cores personalizadas ou desligado; em qualquer direção), cantos arredondados, espaço e bordas nos painéis, texto com alto contraste, tamanho da interface de 80 a 150 %, biblioteca de mídia à esquerda/direita, linha do tempo embaixo/em cima, altura das faixas, navegação da tela inicial no topo ou na lateral, projetos em grade ou lista. |
 | **Exportar** | H.264, HEVC, AV1, VP9, ProRes, GIF, codificação na GPU (VA-API), 480p–4K, 24–60 fps, só o áudio (MP3/AAC/WAV/FLAC), trecho de entrada/saída. A exportação usa o mesmo compositor da prévia. |
 
 ## 1. Instalar
@@ -60,9 +65,9 @@ Para remover: `./uninstall.sh` (os projetos e os modelos de fala baixados são m
 
 ### Windows
 
-* `VeloMov-0.8.1-windows-x64-setup.exe` — **instalador** (em português; atalhos no Menu Iniciar e na
+* `VeloMov-0.9.0-windows-x64-setup.exe` — **instalador** (em português; atalhos no Menu Iniciar e na
   Área de Trabalho, abre arquivos `.vmov`, desinstala pelo Windows). Não precisa de administrador.
-* `VeloMov-0.8.1-windows-x64-portable.zip` — **portátil**: descompacte em qualquer pasta/pendrive e
+* `VeloMov-0.9.0-windows-x64-portable.zip` — **portátil**: descompacte em qualquer pasta/pendrive e
   abra `velomov.exe`. Projetos, configurações e cache ficam na pasta `data` ao lado do programa
   (o arquivo `portable.txt` liga isso; apague-o para usar `%APPDATA%\VeloMov`).
 
@@ -124,6 +129,10 @@ Os projetos são salvos sozinhos em `~/.local/share/velomov/projects` (Windows:
    transições são convertidos sozinhos ao abrir, sem mudar a duração nem tirar nada do lugar.
 7. **Efeitos / Filtros / Texto / Adesivos / Ajuste**: clique em um item na biblioteca (vai para o
    cursor) ou arraste até a linha do tempo. Passe o mouse sobre um efeito/transição para ver a prévia.
+   **Fontes**: na lista **Fonte** de um texto cada fonte aparece escrita nela mesma, e o quadro no
+   topo mostra o seu texto na fonte que está debaixo do mouse. Clique na ☆ ao lado de uma fonte para
+   torná-la **favorita** (as favoritas ficam no topo; a ☆ ao lado da pesquisa mostra só elas). As
+   últimas 8 fontes usadas aparecem em **Usadas recentemente**.
 8. **Propriedades**: selecione um clipe — o painel da direita tem Vídeo (transformar, mesclar,
    borrão de movimento, tela, recorte, máscara, remover fundo), Áudio, Velocidade (incluindo curvas
    como Montagem/Herói/Bala), Animação (entrada/saída/combinação) e Ajustar (brilho, contraste…).
@@ -134,8 +143,11 @@ Os projetos são salvos sozinhos em `~/.local/share/velomov/projects` (Windows:
     ProRes, GIF ou GPU/VA-API), taxa de quadros, ou só o áudio. O arquivo vai para a pasta Vídeos
     (dá para trocar).
 
-Na tela inicial, **Selecionar** (ou `Ctrl`+clique, ou o círculo no canto de um projeto) marca
-vários projetos de uma vez para **Duplicar** ou **Excluir**; `Ctrl+A` marca todos.
+A **tela inicial** abre com um banner: as ações principais, o card **Continuar editando** com o
+último projeto e uma dica do dia (clique nela para ver a próxima). **Seus projetos** podem aparecer
+em grade ou lista (botões à direita), ordenados por edição mais recente, nome ou duração.
+**Selecionar** (ou `Ctrl`+clique, ou o círculo no canto de um projeto) marca vários projetos de uma
+vez para **Duplicar** ou **Excluir**; `Ctrl+A` marca todos.
 
 ### 3a. Legendas automáticas animadas
 
@@ -208,16 +220,28 @@ No canto superior direito do **Player** há o botão de qualidade (ícone de vel
 
 ### 3d. Configurações
 
-Na tela inicial clique em **Configurações**, ou no editor use **Menu → Configurações**:
+Na tela inicial clique em **Configurações**, ou no editor use **Menu → Configurações**. A janela tem
+abas na lateral esquerda; tudo muda na hora, sem reiniciar:
 
-* **Aparência**: tema (Preto — padrão —, Preto puro, Grafite, Azul meia-noite, Ameixa) e **cor de
-  destaque** (8 cores prontas ou qualquer cor em *Personalizada*). Muda na hora, sem reiniciar.
-* **Geral**: idioma, duração das fotos, salvamento automático.
+* **Aparência**: tema (Preto — padrão —, Preto puro, Grafite, Azul meia-noite, Ameixa), **cor de
+  destaque** (8 cores prontas ou qualquer cor em *Personalizada*), **gradiente** do botão Exportar e
+  do banner da tela inicial (*Automático* a partir da cor de destaque, *Duas cores* à sua
+  escolha, ou *Desligado*; horizontal, diagonal ou vertical), **cantos arredondados**, **espaço
+  entre painéis**, **bordas nos painéis** e **texto com alto contraste**.
+* **Layout**: **tamanho da interface** (80–150 %); no editor, a **biblioteca de mídia** à esquerda ou
+  à direita (o painel de propriedades vai para o outro lado), a **linha do tempo** embaixo ou em cima
+  e a **altura das faixas**; na tela inicial, a **navegação** numa barra no topo ou na lateral, o
+  **banner de boas-vindas**, **grade ou lista** e o **tamanho dos cards**; **notificações** em cima
+  ou embaixo; **animações** ligadas ou desligadas.
+* **Geral**: idioma, duração das fotos, salvamento automático, **fontes** favoritas e usadas
+  recentemente (remover ou limpar).
 * **Desempenho**: qualidade da prévia, decodificação por hardware, proxies.
-* **Legendas automáticas**: modelo de fala (com explicação de cada um), GPU, threads.
+* **Legendas**: modelo de fala (com explicação de cada um), GPU, threads.
 * **Armazenamento**: o cache (áudio extraído, proxies, miniaturas) é **apagado sozinho** quando um
   arquivo fica **7 dias sem uso** — dá para trocar para 1, 3, 14 ou 30 dias, ou *Nunca*. Mostra o
   tamanho atual e tem o botão **Limpar cache agora**. Nada se perde: o VeloMov recria o que precisar.
+
+![Configurações](docs/settings.png)
 
 ## 4. Atalhos
 

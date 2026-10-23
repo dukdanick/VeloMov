@@ -9,12 +9,15 @@ social-video editors.
 
 ## Download
 
-**Windows 10/11 (64-bit)**: [VeloMov 0.8.1 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.8.1)
+**Windows 10/11 (64-bit)**: [VeloMov 0.9.0 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.9.0)
 
-* [`VeloMov-0.8.1-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.1/VeloMov-0.8.1-windows-x64-setup.exe): installer
-* [`VeloMov-0.8.1-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.1/VeloMov-0.8.1-windows-x64-portable.zip): portable, no installation
+* [`VeloMov-0.9.0-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.9.0/VeloMov-0.9.0-windows-x64-setup.exe): installer
+* [`VeloMov-0.9.0-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.9.0/VeloMov-0.9.0-windows-x64-portable.zip): portable, no installation
 
 **Linux**: AppImage coming soon! In the meantime, build from source. see [Install](#1-install).
+
+**What's new in 0.9.0**: favourite and recently used fonts with previews, a new home screen,
+settings in tabs and many more ways to customise the interface — see the [changelog](./CHANGELOG.md).
 
 ![Editor](docs/editor.png)
 
@@ -32,7 +35,8 @@ social-video editors.
 | **Video tools** | Transform gizmo in the player (move/scale/rotate with centre snapping), crop, canvas blur/colour, 14 blend modes, masks (linear, mirror, circle, rectangle, heart, star) with feather, chroma key, speed 0.1×–100× and speed curves (Montage, Hero, Bullet, Jump Cut, Flash In/Out, Velocity). |
 | **Audio** | Waveforms, volume (dB) with keyframes, fade in/out, silence removal, noise reduction, voice effects, synthesised sound effects (whoosh, whip, pop, boom, riser…), pitch-preserving speed changes. |
 | **Auto captions** | Speech recognition with whisper.cpp, on your computer (on the GPU through Vulkan when available). Word-timed captions in 12 animated styles — karaoke, highlight, word box, pop, bounce, reveal, one word, glow, underline, spotlight, bubble, classic — switched for all captions at once. Choice of speech model (tiny … large-v3, downloaded on first use), explained in Settings. Fixing a word keeps the timing. |
-| **Text & stickers** | Any system font, stroke, background box, shadow, letter/line spacing, presets; vector and emoji stickers. |
+| **Text & stickers** | Any system font — each one previewed in itself, with favourites (☆) and the recently used ones on top —, stroke, background box, shadow, letter/line spacing, presets; vector and emoji stickers. |
+| **Your interface** | 5 themes, any accent colour, gradient (automatic, custom colours or off; any direction), rounded corners, panel spacing and borders, high-contrast text, interface size 80–150 %, media library left/right, timeline bottom/top, track height, home navigation in a top bar or side bar, grid or list of projects. |
 | **Export** | H.264, HEVC, AV1, VP9, ProRes, GIF, GPU encoding (VA-API), 480p–4K, 24–60 fps, audio only (MP3/AAC/WAV/FLAC), in/out range. The exporter uses the same compositor as the preview. |
 
 ## 1. Install
@@ -60,9 +64,9 @@ To remove: `./uninstall.sh` (projects and downloaded speech models are kept).
 
 ### Windows
 
-* `VeloMov-0.8.1-windows-x64-setup.exe` — **installer** (Portuguese/English; Start menu and desktop
+* `VeloMov-0.9.0-windows-x64-setup.exe` — **installer** (Portuguese/English; Start menu and desktop
   shortcuts, opens `.vmov` files, uninstalls from Windows settings). No administrator needed.
-* `VeloMov-0.8.1-windows-x64-portable.zip` — **portable**: unzip anywhere (or onto a USB stick) and
+* `VeloMov-0.9.0-windows-x64-portable.zip` — **portable**: unzip anywhere (or onto a USB stick) and
   run `velomov.exe`. Projects, settings and cache stay in the `data` folder next to the program
   (the `portable.txt` file turns this on; delete it to use `%APPDATA%\VeloMov`).
 
@@ -123,6 +127,10 @@ caches live in `~/.cache/velomov` (Windows: `%LOCALAPPDATA%\VeloMov`).
    converted when opened, without changing their length or moving anything.
 7. **Effects / Filters / Text / Stickers / Adjustment**: click an item in the library (it goes to the
    playhead) or drag it to the timeline. Hover an effect/transition to preview it.
+   **Fonts**: in a text's **Font** list every font is written in itself, and the box on top shows
+   your text in the font under the mouse. Click the ☆ next to a font to make it a **favourite**
+   (favourites stay at the top; the ☆ by the search shows only them). The last 8 fonts you used
+   appear under **Recently used**.
 8. **Properties**: select a clip — the right panel has Video (transform, blend, motion blur, canvas,
    crop, mask, remove background), Audio, Speed (including curves like Montage/Hero/Bullet),
    Animation (in/out/combo) and Adjust (brightness, contrast…).
@@ -133,8 +141,11 @@ caches live in `~/.cache/velomov` (Windows: `%LOCALAPPDATA%\VeloMov`).
     VP9, ProRes, GIF or GPU/VA-API), frame rate, or audio only. The file goes to your Videos folder
     (can be changed).
 
-On the home screen, **Select** (or `Ctrl`+click, or the circle in a project's corner) marks several
-projects at once to **Duplicate** or **Delete**; `Ctrl+A` marks all.
+The **home screen** greets you with a banner: main actions, a **Continue editing** card for the
+last project and a tip of the day (click it for the next one). **Your projects** can be a grid or a
+list (buttons on the right), ordered by last edited, name or duration. **Select** (or `Ctrl`+click,
+or the circle in a project's corner) marks several projects at once to **Duplicate** or **Delete**;
+`Ctrl+A` marks all.
 
 ### 3a. Animated auto captions
 
@@ -206,16 +217,28 @@ The player's top right corner has the quality button (gauge icon, **Medium** by 
 
 ### 3d. Settings
 
-On the home screen click **Settings**, or in the editor **Menu → Settings**:
+On the home screen click **Settings**, or in the editor **Menu → Settings**. The window has tabs on
+its left side; everything applies at once, no restart:
 
-* **Appearance**: theme (Black — default —, Pure black, Graphite, Midnight blue, Plum) and **accent
-  colour** (8 presets or any colour under *Custom*). Applies at once, no restart.
-* **General**: language, photo duration, auto-save.
+* **Appearance**: theme (Black — default —, Pure black, Graphite, Midnight blue, Plum), **accent
+  colour** (8 presets or any colour under *Custom*), **gradient** of the Export button and home
+  banner (*Automatic* from the accent colour, *Two colours* of your choice, or *Off*; horizontal,
+  diagonal or vertical), **rounded corners**, **space between panels**, **panel borders** and
+  **high-contrast text**.
+* **Layout**: **interface size** (80–150 %); in the editor, the **media library** on the left or
+  right (the inspector goes to the other side), the **timeline** at the bottom or top and the
+  **track height**; on the home screen, the **navigation** in a top bar or a side bar, the
+  **welcome banner**, **grid or list** and **card size**; **notifications** at the top or bottom;
+  **animations** on or off.
+* **General**: language, photo duration, auto-save, favourite and recently used **fonts** (remove
+  or clear).
 * **Performance**: preview quality, hardware decoding, proxies.
-* **Auto captions**: speech model (each one explained), GPU, threads.
+* **Captions**: speech model (each one explained), GPU, threads.
 * **Storage**: cache files (extracted audio, proxies, thumbnails) are **deleted by themselves** after
   **7 days unused** — or 1, 3, 14, 30 days, or *Never*. Shows the current size and has **Clear cache
   now**. Nothing is lost: VeloMov makes again whatever it needs.
+
+![Settings](docs/settings.png)
 
 ## 4. Keyboard shortcuts
 

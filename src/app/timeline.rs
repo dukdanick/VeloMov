@@ -36,7 +36,7 @@ pub struct TlDrag {
 }
 
 pub fn track_h(t: &Track) -> f32 {
-    if t.main {
+    let h = if t.main {
         64.0
     } else {
         match t.kind {
@@ -44,6 +44,12 @@ pub fn track_h(t: &Track) -> f32 {
             TrackKind::Audio => 42.0,
             _ => 28.0,
         }
+    };
+    // "Track height" in the settings
+    match ui_prefs().track_size {
+        0 => (h * 0.78_f32).round().max(24.0),
+        2 => (h * 1.3_f32).round(),
+        _ => h,
     }
 }
 

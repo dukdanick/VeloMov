@@ -1,5 +1,5 @@
 ; Inno Setup script for the VeloMov installer. Built by packaging/windows/build-cross.sh:
-;   ISCC /DAppVersion=0.8.1 /DSourceDir=<staged folder> /DOutputDir=<dist> /DRepoDir=<repo> velomov.iss
+;   ISCC /DAppVersion=0.9.0 /DSourceDir=<staged folder> /DOutputDir=<dist> /DRepoDir=<repo> velomov.iss
 #ifndef AppVersion
   #define AppVersion "0.0.0"
 #endif

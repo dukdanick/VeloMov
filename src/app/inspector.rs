@@ -961,31 +961,9 @@ fn text_tab(app: &mut VeloApp, ui: &mut egui::Ui, c: &Clip) {
     }
     changed |= r.changed();
     ui.add_space(4.0);
-    // font
-    if app.font_list.is_none() {
-        app.font_list = Some(crate::engine::raster::font_families());
-    }
-    let fonts = app.font_list.clone().unwrap_or_default();
+    // font: favourites, recently used and a preview of each font
     label_row(ui, "Font", |ui| {
-        let cur = if td.font.is_empty() { tr("System default").to_string() } else { td.font.clone() };
-        egui::ComboBox::from_id_salt(("font", id)).width(ui.available_width() - 6.0).selected_text(cur).height(320.0).show_ui(ui, |ui| {
-            let filt_id = egui::Id::new("font-filter");
-            let mut filt: String = ui.memory(|m| m.data.get_temp(filt_id)).unwrap_or_default();
-            if ui.add(egui::TextEdit::singleline(&mut filt).hint_text(tr("Search fonts"))).changed() {
-                ui.memory_mut(|m| m.data.insert_temp(filt_id, filt.clone()));
-            }
-            if ui.selectable_label(td.font.is_empty(), tr("System default")).clicked() {
-                td.font.clear();
-                changed = true;
-            }
-            let fl = filt.to_lowercase();
-            for f in fonts.iter().filter(|f| fl.is_empty() || f.to_lowercase().contains(&fl)).take(400) {
-                if ui.selectable_label(td.font == *f, egui::RichText::new(f).family(egui::FontFamily::Proportional)).clicked() {
-                    td.font = f.clone();
-                    changed = true;
-                }
-            }
-        });
+        changed |= super::fonts::font_picker(app, ui, id, &mut td);
     });
     changed |= slider_row(ui, "Size", &mut td.size, 1.0, 120.0, 15.0, 1, "", None).changed;
     label_row(ui, "Style", |ui| {
