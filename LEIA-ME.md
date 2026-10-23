@@ -5,6 +5,8 @@ quadros-chave, transições com borrão de movimento de verdade, efeitos, filtro
 legendas automáticas animadas e exportação pelo FFmpeg com o jeito dos editores de vídeo para
 redes sociais: biblioteca, player, detalhes e linha do tempo.
 
+Note que o editor ainda não está em sua versão estável (1.0.0), então espere encontrar alguns bugs
+
 *English version: [README.md](./README.md).*
 
 ## Baixar
