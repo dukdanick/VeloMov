@@ -2,7 +2,7 @@
 
 Todas as mudanças importantes do VeloMov. *English version: [CHANGELOG.md](./CHANGELOG.md).*
 
-## 0.9.0 — 23/10/2026
+## 0.9.0 — 23/10/2026 (pré-lançamento)
 
 ### Fontes
 
@@ -87,7 +87,7 @@ Tudo vale na hora, sem reiniciar, e fica salvo junto com as outras configuraçõ
 * Os losangos de quadros-chave na linha do tempo aparecem por cima das alças de corte e das
   transições.
 
-## 0.8.0 — 22/10/2026
+## 0.8.0 — 22/10/2026 (pré-lançamento)
 
 * O VeloCut agora se chama **VeloMov**.
 * **Legendas automáticas animadas** com whisper.cpp, no seu computador (na placa de vídeo via Vulkan
