@@ -138,8 +138,6 @@ caches live in `~/.cache/velomov` (Windows: `%LOCALAPPDATA%\VeloMov`).
 On the home screen, **Select** (or `Ctrl`+click, or the circle in a project's corner) marks several
 projects at once to **Duplicate** or **Delete**; `Ctrl+A` marks all.
 
-GIF and WebP work as photos (1 frame) or as video (animated), keeping transparency.
-
 ### 3a. Animated auto captions
 
 1. **Captions** tab in the library (left) → **Auto captions**.
