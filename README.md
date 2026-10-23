@@ -60,8 +60,6 @@ To remove: `./uninstall.sh` (projects and downloaded speech models are kept).
 
 ### Windows
 
-The ready files are in `dist/`:
-
 * `VeloMov-0.8.0-windows-x64-setup.exe` — **installer** (Portuguese/English; Start menu and desktop
   shortcuts, opens `.vcut` files, uninstalls from Windows settings). No administrator needed.
 * `VeloMov-0.8.0-windows-x64-portable.zip` — **portable**: unzip anywhere (or onto a USB stick) and
