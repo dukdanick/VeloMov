@@ -14,7 +14,7 @@ social-video editors.
 * [`VeloMov-0.8.0-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-setup.exe): installer
 * [`VeloMov-0.8.0-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-portable.zip): portable, no installation
 
-**Linux**: build from source, see [Install](#1-install).
+**Linux**: AppImage coming soon! In the meantime, build from source. see [Install](#1-install).
 
 ![Editor](docs/editor.png)
 
