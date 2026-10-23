@@ -1,11 +1,20 @@
 # VeloMov
 
-**Editor de vídeo leve para Linux e Windows.** Feito em Rust, com composição na placa de vídeo,
+**Editor de vídeo leve e grátis para Linux e Windows.** Feito em Rust, com composição na placa de vídeo,
 quadros-chave, transições com borrão de movimento de verdade, efeitos, filtros, textos, adesivos,
 legendas automáticas animadas e exportação pelo FFmpeg com o jeito dos editores de vídeo para
 redes sociais: biblioteca, player, detalhes e linha do tempo.
 
 *English version: [README.md](./README.md).*
+
+## Baixar
+
+**Windows 10/11 (64-bit)**: [VeloMov 0.8.0 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.8.0)
+
+* [`VeloMov-0.8.0-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-setup.exe): Instalador
+* [`VeloMov-0.8.0-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-portable.zip): Portátil
+
+**Linux**: compile a partir do código-fonte. Consulte [Instalação](#1-install).
 
 ![Editor](docs/editor.png)
 
