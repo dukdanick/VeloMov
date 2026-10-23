@@ -7,6 +7,15 @@ social-video editors.
 
 *Versão em português: [LEIA-ME.md](./LEIA-ME.md).*
 
+## Download
+
+**Windows 10/11 (64-bit)**: [VeloMov 0.8.0 (pre-release)](https://github.com/dukdanick/velomov/releases/tag/v0.8.0)
+
+* [`VeloMov-0.8.0-windows-x64-setup.exe`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-setup.exe): installer
+* [`VeloMov-0.8.0-windows-x64-portable.zip`](https://github.com/dukdanick/velomov/releases/download/v0.8.0/VeloMov-0.8.0-windows-x64-portable.zip): portable, no installation
+
+**Linux**: build from source, see [Install](#1-install).
+
 ![Editor](docs/editor.png)
 
 ## Highlights
